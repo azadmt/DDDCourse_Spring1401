@@ -5,7 +5,9 @@ using AccountManagement.Domain.Contract;
 using AccountManagement.EventHandlers;
 using AccountManagement.Persistence.EF;
 using Autofac;
+using Framework.Bus.Autofac;
 using Framework.Core;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -37,33 +39,38 @@ namespace AccountManagement.Api
 
             services.AddControllers();
             services.AddDbContext<AccountManagementDbContext>(opt => opt.UseInMemoryDatabase("AccountManagementDB"));
-            //services.AddScoped<IBus, Bus>(p => new Bus(services));
-            //services.AddScoped<IBankAccountRepository, BankAccountRepository>();
-            //services.AddScoped<ICommandHandler<OpenNewAccountCommand>, OpenNewAccountCommandHandler>();
-            //services.AddScoped<IEventHandler<AccountCratedEvent>, AccountCeatedEventHandler>();
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AccountManagement.Api", Version = "v1" });
             });
 
-            //services.AddScoped<ICommandBus, Bus>(p => new Bus(services));
+            services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq();
+                ////// TODO: Auto Register Consumers
+                //x.AddConsumer<AccountCreatedEventHandler>();
+                //// x.UsingRabbitMq();
+                //x.UsingRabbitMq((context, cfg) =>
+                //{
+                //    cfg.ReceiveEndpoint(nameof(AccountCreatedEventHandler), e =>
+                //    {
+                //        e.ConfigureConsumer<AccountCreatedEventHandler>(context);
+                //    });
+                //});
+            });
+
+            services.AddMassTransitHostedService();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-
-            // If you want to set up a controller for, say, property injection
-            // you can override the controller registration after populating services.
-          //  builder.RegisterType<IBus, Bus>(p => new Bus(services));
-           // builder.Register<IBus>((p,c)=>  new Bus(null));
-            builder.RegisterType<Bus>().As<IBus>().InstancePerLifetimeScope();
+            builder.RegisterType<AutofacBus>().As<Framework.Core.IBus>().InstancePerLifetimeScope();
             builder.RegisterType<BankAccountRepository>().As<IBankAccountRepository>().InstancePerLifetimeScope();
             builder.RegisterType<OpenNewAccountCommandHandler>().As<ICommandHandler<OpenNewAccountCommand>>().InstancePerLifetimeScope();
             builder.RegisterType<AccountCeatedEventHandler>().As<IEventHandler<AccountCratedEvent>>().InstancePerLifetimeScope();
-
-
         }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

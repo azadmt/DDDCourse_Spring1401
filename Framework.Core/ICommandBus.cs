@@ -4,9 +4,4 @@
     {
         void Send<TCommand>(TCommand command);
     }
-
-    public interface IBus : ICommandBus, IEventBus
-    {
-
-    }
 }
