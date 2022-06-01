@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CustomerManagement.Domain\CustomerManagement.Domain.csproj" />
     <ProjectReference Include="..\ReadModel.EventHandler\ReadModel.EventHandler.csproj" />
   </ItemGroup>
 

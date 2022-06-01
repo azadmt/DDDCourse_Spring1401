@@ -5,9 +5,8 @@ using System.Collections.Generic;
 
 namespace AccountManagement.Domain.BankAccount
 {
-    public class BankAccountAggregate : Entity<Guid>
+    public class BankAccountAggregate : Framework.Core.Domian.AggregateRoot<Guid>
     {
-        public List<IEvent> Changes { get; private set; } = new List<IEvent>();
         private BankAccountAggregate() { }
 
         private BankAccountAggregate(Guid id,
@@ -20,7 +19,7 @@ namespace AccountManagement.Domain.BankAccount
             Number = accountNumber;
             Type = accountType;
 
-            Changes.Add(new AccountCratedEvent(Id, ownerId, 0, (int)Type, Number.Value));
+            Changes.Add(new AccountCratedEvent(Id, ownerId, 0, Type.ToString(), Number.Value));
         }
 
         /// <summary>
@@ -61,13 +60,26 @@ namespace AccountManagement.Domain.BankAccount
 
         public AccountType Type { get; private set; }
 
+        public AccountState State { get; private set; }
+        
+
+        public void Active()
+        {
+            State = AccountState.Active;
+        }
+
+        public void DeActive()
+        {
+            State = AccountState.Deactive;
+        }
+
         public void Withraw(Money amount)
         {
             if (Balance < amount)
                 throw new AccountBalanceCanNotBeNegativeException();
 
             Balance -= amount;
-         
+
         }
 
         public void Deposit(Money amount)

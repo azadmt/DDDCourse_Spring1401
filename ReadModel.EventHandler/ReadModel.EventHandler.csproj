@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AccountManagement.Domain.Contract\AccountManagement.Domain.Contract.csproj" />
+    <ProjectReference Include="..\CustomerManagement.Domain.Contract\CustomerManagement.Domain.Contract.csproj" />
+    <ProjectReference Include="..\ReadModel.DAL\ReadModel.DAL.csproj" />
   </ItemGroup>
 
 </Project>

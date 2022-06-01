@@ -48,16 +48,6 @@ namespace AccountManagement.Api
             services.AddMassTransit(x =>
             {
                 x.UsingRabbitMq();
-                ////// TODO: Auto Register Consumers
-                //x.AddConsumer<AccountCreatedEventHandler>();
-                //// x.UsingRabbitMq();
-                //x.UsingRabbitMq((context, cfg) =>
-                //{
-                //    cfg.ReceiveEndpoint(nameof(AccountCreatedEventHandler), e =>
-                //    {
-                //        e.ConfigureConsumer<AccountCreatedEventHandler>(context);
-                //    });
-                //});
             });
 
             services.AddMassTransitHostedService();

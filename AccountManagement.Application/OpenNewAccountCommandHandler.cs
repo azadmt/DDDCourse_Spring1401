@@ -27,10 +27,10 @@ public class OpenNewAccountCommandHandler :
             );
 
         accountRepository.Add(account);
-        foreach (var @event in account.Changes)
-        {
-            eventBus.Publish((dynamic)@event);
-        }
+        //foreach (var @event in account.Changes)
+        //{
+        //    eventBus.Publish((dynamic)@event);
+        //}
     }
 
     public void Handle(WithdrawFromAccountCommand command)

@@ -1,35 +1,23 @@
-﻿using AccountManagement.Domain.BankAccount;
-using Framework.Core;
+﻿using Framework.Core;
 using Framework.Core.Domian;
-using Framework.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace AccountManagement.Persistence.EF
+namespace Framework.Persistence
 {
-    public class AccountManagementDbContext : ApplicationDbContext
+    public class ApplicationDbContext : DbContext
     {
-     
-        private readonly IEventBus eventBus;
+        private readonly IBus eventBus;
 
-        public AccountManagementDbContext(DbContextOptions<AccountManagementDbContext> options, IBus eventBus)
-        : base(options,eventBus)
+        public ApplicationDbContext(DbContextOptions options, IBus eventBus)
+      : base(options)
         {
             this.eventBus = eventBus;
         }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AccountManagementDbContext).Assembly);
-        }
+        public DbSet<OutBoxMessage> OutBoxMessages { get; set; }
 
         public override int SaveChanges()
         {
@@ -57,13 +45,7 @@ namespace AccountManagement.Persistence.EF
                 }
 
             }
-            base.SaveChanges();
-
-            var outbox = OutBoxMessages.ToList();
-
-            return 1;
+            return base.SaveChanges();
         }
     }
-
-
 }

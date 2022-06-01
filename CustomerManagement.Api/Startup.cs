@@ -1,4 +1,4 @@
-using CustomerManagement.Domain.Contract;
+using CustomerManagement.DAL;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,14 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using ReadModel.DAL;
-using ReadModel.EventHandler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReadModel
+namespace CustomerManagement.Api
 {
     public class Startup
     {
@@ -32,33 +30,17 @@ namespace ReadModel
         {
 
             services.AddControllers();
-            services.AddDbContext<ReadModelDbContext>(opt => opt.UseInMemoryDatabase("ReadModelDb"));
+            services.AddDbContext<CustomerManagementDbContext>(opt => opt.UseInMemoryDatabase("CustomerManagementDb"));
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ReadModel", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CustomerManagement.Api", Version = "v1" });
             });
 
 
             services.AddMassTransit(x =>
             {
-                //// TODO: Auto Register Consumers
-                x.AddConsumer<AccountCreatedEventHandler>();
-                x.AddConsumer<CustomerCreatedEventHandler>();
-                // x.UsingRabbitMq();
-                x.UsingRabbitMq((context, cfg) =>
-                {
-                    cfg.ReceiveEndpoint(nameof(AccountCreatedEventHandler), e =>
-                    {
-                        e.ConfigureConsumer<AccountCreatedEventHandler>(context);                        
-                    });
-
-                    
-                    cfg.ReceiveEndpoint(nameof(CustomerCreatedEventHandler), e =>
-                    {
-                        e.ConfigureConsumer<CustomerCreatedEventHandler>(context);
-                    });
-                });
+                x.UsingRabbitMq();
             });
 
             services.AddMassTransitHostedService();
@@ -71,7 +53,7 @@ namespace ReadModel
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ReadModel v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CustomerManagement.Api v1"));
             }
 
             app.UseRouting();

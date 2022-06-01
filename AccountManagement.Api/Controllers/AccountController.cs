@@ -36,7 +36,8 @@ namespace AccountManagement.Api.Controllers
         [HasPermission]
         public IActionResult Post(OpenNewAccountCommand openNewAccountDto)
         {
-            busControl.Publish(new AccountCratedEvent(Guid.NewGuid(),Guid.NewGuid(),1500,0,"556644")).Wait();
+            //TO DO : Move to Commit of UOW
+            busControl.Publish(new AccountCratedEvent(Guid.NewGuid(),openNewAccountDto.OwnerId,1500,AccountType.Current.ToString(),"556644")).Wait();
             //if(UserHasPermission("OpenNewAccountCommand"))
             bus.Send(openNewAccountDto);
             return Ok();

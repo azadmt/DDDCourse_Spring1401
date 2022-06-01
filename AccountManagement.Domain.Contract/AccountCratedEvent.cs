@@ -3,9 +3,9 @@ using System;
 
 namespace AccountManagement.Domain.Contract
 {
-    public class AccountCratedEvent : IEvent
+    public class AccountCratedEvent : IntegrationEvent
     {
-        public AccountCratedEvent(Guid id, Guid ownerId, decimal balance, int accountType, string accountNumber)
+        public AccountCratedEvent(Guid id, Guid ownerId, decimal balance, string accountType, string accountNumber)
         {
             Id = id;
             OwnerId = ownerId;
@@ -17,7 +17,8 @@ namespace AccountManagement.Domain.Contract
         public Guid Id { get; }
         public Guid OwnerId { get; }
         public decimal Balance { get; }
-        public int AccountType { get; }
+        public string AccountType { get; }
         public string AccountNumber { get; }
+        public Guid EventId { get; set; } = Guid.NewGuid();
     }
 }
